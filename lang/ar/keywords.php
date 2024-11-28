@@ -14,7 +14,7 @@ return [
     'error_msg_email' => 'يجب أن يكون هناك قيمة للبريد الإلكتروني',
     'error_msg_password' => 'يجب أن يكون هناك قيمة لكلمة المرور',
     'error_msg_phone' => 'يجب أن يكون هناك قيمة لرقم الهاتف',
-    'error_msg_type' => 'يجب أن يكون هناك قيمة لنوعه',
+    'error_msg_role' => 'يجب أن يكون هناك قيمة لنوعه',
     'error_msg_category_name' => 'يجب إدخال اسم الفئة',
     'error_msg_category_description' => 'يجب إدخال وصف الفئة',
     'error_msg_image_url' => 'يجب إدخال صورة للفئة',

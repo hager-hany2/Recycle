@@ -4,8 +4,11 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Stichoza\GoogleTranslate\GoogleTranslate;
 use Symfony\Component\HttpFoundation\Response;
+
+
 class AdminMiddleware
 {
     /**
@@ -17,7 +20,7 @@ class AdminMiddleware
     {
         $lang = $request->header('lang', 'en');// في حاله عدم تحقق الشرط تكون اللغة en
         $translate = new GoogleTranslate($lang);//يستخدم لترجمة الجمل المطلوبة
-        if (Auth::check() && Auth::user()->type === 'admin') {
+        if (Auth::check() && Auth::user()->role === 'admin') {
             return $next($request);
         }
         return response()->json([

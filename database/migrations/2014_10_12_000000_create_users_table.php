@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('phone');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->enum('type', ['admin', 'user','مستخدم','ادمن'])->default('user');
+            $table->enum('role', ['admin', 'user'])->default('user');
             $table->enum('category_user', ['restaurant', 'home', 'school']); // يملأ فقط للمستخدم العادي
             $table->string('api_token', 80)->unique()->nullable(); // حقل لتخزين API Token
             $table->integer('price')->default(0);

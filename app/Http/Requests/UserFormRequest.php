@@ -30,7 +30,7 @@ class UserFormRequest extends FormRequest
             'email'=>'required|email|unique:users,id',
             'phone'=>'required|unique:users,id',
             'password'=>'required',
-            'type'=>'required',
+            'role'=>'required',
             'category_user' =>'required' ,
             // استخدمي 'sometimes' بدل 'filled' للتحقق من وجود الحقل فقط إذا كان موجودًا
             'price'=>'filled|numeric',
@@ -49,7 +49,7 @@ class UserFormRequest extends FormRequest
             'email'=>__('keywords.email'),
             'password'=>__('keywords.password'),
             'phone'=>__('keywords.phone'),
-            'type'=>__('keywords.type'),
+            'role'=>__('keywords.role'),
             'category_user'=>__('keywords.category_user'),
             'Gender'=>__('keywords.Gender')
         ];

@@ -49,7 +49,7 @@ class ProfileController extends Controller
             'image_url_profile' => $user['image_url_profile'],
             'phone' => $user['phone'],
             'password'=>$user['password'],
-            "type" => $translator->translate($user["type"]), // ترجمة النوع
+            "role" => $translator->translate($user["role"]), // ترجمة النوع
             "category_user" => $translator->translate($user["category_user"]), // ترجمة النوع
             'price'=> $translator->translate($user["price"]),
             'point'=> $translator->translate($user["point"]),
@@ -91,7 +91,7 @@ class ProfileController extends Controller
             'email' => $user['email'],
             'phone' => $user['phone'],
             'password'=>$user['password'],
-            "type" => $translator->translate($user["type"]), // ترجمة النوع
+            "role" => $translator->translate($user["role"]), // ترجمة النوع
             "category_user" => $translator->translate($user["category_user"]), // ترجمة النوع
             'price'=> $translator->translate($user["price"]),
             'point'=> $translator->translate($user["point"]),

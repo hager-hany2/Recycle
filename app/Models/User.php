@@ -25,7 +25,7 @@ class User extends Authenticatable
         'password',
         'phone',
         'category_user',
-        'type',
+        'role',
         'price',
         'point',
         'image_url'
