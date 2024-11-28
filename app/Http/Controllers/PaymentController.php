@@ -2,16 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\OrderFormRequest;
-use App\Models\Order;
+use App\Http\Requests\callbackFormRequest;
+use App\Http\Requests\PaymentFormRequest;
 use App\Models\Payment;
 use App\Services\TranslationGoogle;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use App\Services\VodafonePaymentService;
-use App\Http\Requests\PaymentFormRequest;
-use App\Http\Requests\callbackFormRequest;
-use Illuminate\Support\Facades\Http;
+
 class PaymentController extends Controller
 {
     public function store(PaymentFormRequest $request)
@@ -23,7 +18,7 @@ class PaymentController extends Controller
 //        dd($lang); //test lang
         // التحقق من البيانات
 
-        $data=$request->validated();
+        $data = $request->validated();
 //        dd($data);
         // إنشاء سجل جديد في جدول المدفوعات
         $payment = Payment::create($request->only(['user_id', 'order_id', 'Amount_paid', 'status', 'transaction_id', 'payment_method']));
@@ -34,9 +29,10 @@ class PaymentController extends Controller
             ], 201);
         }
         return response()->json([
-            'error'=>$translator->translate('failed payment'),
+            'error' => $translator->translate('failed payment'),
         ]);
     }
+
     public function handleCallback(callbackFormRequest $request)
     {
         $lang = $request->header('lang', 'en');
@@ -47,7 +43,7 @@ class PaymentController extends Controller
             $payment->status = $request->status === 'success' ? 'completed' : 'failed';
             $payment->save();
         }
-        return response()->json(['message' => $translator->translate( 'Callback received')]);
+        return response()->json(['message' => $translator->translate('Callback received')]);
     }
 
 }

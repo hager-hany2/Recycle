@@ -4,40 +4,42 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UserFormlogin;
-use App\Http\Resources\UserResource;
-
 use App\Services\TranslationGoogle;
-use Illuminate\Http\Request;
-use Stichoza\GoogleTranslate\GoogleTranslate;
 
 class LoginController extends Controller
 {
     /**
-     * Handle the incoming request.
+     * Handle user login.
+     *
+     * @param UserFormlogin $request
+     * @return \Illuminate\Http\JsonResponse
      */
-    // start login
-    public function Login(UserFormlogin $request)//make form UserFormlogin write validate data
+    public function login(UserFormlogin $request)
     {
-        $lang = $request->header('lang', 'en');// في حاله عدم تحقق الشرط تكون اللغة en
-//        dd($lang);
-        $translate = new TranslationGoogle($lang);//يستخدم لترجمة الجمل المطلوبة
-//        dd($translate);
-        $data=$request->validated();
-//        dd($data);
+        // Set default language to 'en' if 'lang' header is not provided
+        $lang = $request->header('lang', 'en');
 
-        if (auth()->attempt($data)){//تقوم بتشفير كلمة المرور وتقوم بالتحقق من البيانات ال بتمر عليها
-            $data=auth()->user();// تساعد للوصول الي البيانات  تفوم بالعمل إذا كان مسجل دخول المستخدم
-//            dd($data);
+        // Initialize the translation service
+        $translate = new TranslationGoogle($lang);
+
+        // Validate user input using the custom form request
+        $credentials = $request->validated();
+
+        // __('')
+
+        // Attempt to authenticate the user
+        if (auth()->attempt($credentials)) {
+            $user = auth()->user(); // Get authenticated user details
+
             return response()->json([
-                'message' => $translate->translate('Login successful')]);
-
-        }else{
-            return response()->json([
-            'error' => $translate->translate('email or password not correct')],405);
-
+                'message' => $translate->translate('Login successful'),
+                'user' => $user // Optionally include user data in the response
+            ]);
         }
 
+        // Return an error if authentication fails
+        return response()->json([
+            'error' => $translate->translate('Email or password is incorrect')
+        ], 405);
     }
-
 }
-//end login

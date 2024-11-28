@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Services\TranslationGoogle;
+use Illuminate\Support\Facades\Request;
+use Stichoza\GoogleTranslate\GoogleTranslate;
 
 class LogoutController extends Controller
 {

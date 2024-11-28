@@ -32,12 +32,15 @@ Route::group(['middleware' => 'ChangeLang'], function () {
 
     // Authentication Routes
     Route::prefix('auth')->group(function () {
-        Route::post('/register', [RegisterController::class, 'register'])->name('auth.register');
+        Route::any('register', [RegisterController::class, 'index'])->name('auth.register');
+//        Route::post('/register', [RegisterController::class, 'register'])->name('auth.register');
         Route::post('/login', [LoginController::class, 'login'])->name('auth.login');
     });
+
     // Admin Routes
     Route::middleware(['admin'])->prefix('admin')->group(function () {
         //store
+
         //product Routes
         Route::post('products', [ProductController::class, 'store'])->name('admin.products.store');
         //category Routes
