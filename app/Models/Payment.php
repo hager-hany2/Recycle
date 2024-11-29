@@ -10,6 +10,7 @@ use App\Models\User;
 class Payment extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'user_id', 'order_id', 'Amount_paid', 'status', 'transaction_id', 'payment_method'
     ];

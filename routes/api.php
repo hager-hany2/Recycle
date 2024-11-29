@@ -76,6 +76,12 @@ Route::get('/search', [SearchController::class, 'search'])->name('search');
 Route::get('/categories/index', [CategoryControllerResource::class, 'index']);
 Route::get('/products/index', [ProductController::class, 'index'])->name('products.index');
 Route::get('ProductPoint/index',[ProductPointcontroller::class,'index']);
+
+
+// show by id
+Route::get('/categories/{id}', [CategoryControllerResource::class, 'show'])->name('categories.show');
+Route::get('/products/{id}', [ProductController::class, 'show'])->name('products.show');
+Route::get('ProductPoint/{id}',[ProductPointcontroller::class,'show']);
 //filter
 Route::get('/categories/products/{category_id}', [FilterCategoryController::class, 'filterCategory'])->name('categories.products.filter');
 

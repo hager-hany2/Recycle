@@ -2,21 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\CategoryFormRequest;
 use App\Http\Requests\ProductFormRequest;
-use App\Models\Categories;
 use App\Models\products;
 use App\Services\TranslationGoogle;
 use App\traits\upload_image;
 use Illuminate\Http\Request;
-use Stichoza\GoogleTranslate\GoogleTranslate;
-use Illuminate\Support\Facades\Storage;
+
 class ProductController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     use upload_image;
+
     public function index(Request $request)
     {
         //        //           تعيين اللغة المطلوبة والافتراضية "en" إذا لم تُحدّد
@@ -26,7 +24,7 @@ class ProductController extends Controller
         //        // تهيئة مترجم Google Translate
         //        $translator = new GoogleTranslate(); // هنا اقوم باانشاء class
         //        $translator->setTarget($lang);
-       //تحسين الكود
+        //تحسين الكود
         //add translate in Services
         $lang = $request->header('lang', 'en');
         $translator = new TranslationGoogle($lang);
@@ -40,7 +38,7 @@ class ProductController extends Controller
                 "point_product" => $translator->translate($product["point_product"]),  // ترجمة اسم الفئة
                 "category_name" => $translator->translate($product["category_name"]), // ترجمة وصف الفئة
                 "QuantityType" => $translator->translate($product["QuantityType"]), // ترجمة اسم الفئة
-                'image_url'=>$product['image_url'],//عرض الصورة
+                'image_url' => $product['image_url'],//عرض الصورة
 
             ];
         });
@@ -65,31 +63,32 @@ class ProductController extends Controller
         $translator = new TranslationGoogle($lang);
         // call in new object TranslationGoogle and add url use App\Services\TranslationGoogle; because porotect must inhert this function
 //        dd($lang); //test lang
-        $data=$request->validated();
+        $data = $request->validated();
 //        dd($data);
         $existing_product = products::where('product_name', $request->product_name)->first();
 //dd($existing_product);
         if ($existing_product) {
             return response()->json([
-                'error' => $translator->translate('already has been this product')],402);
+                'error' => $translator->translate('already has been this product')], 402);
         }
         //upload image
         $imagePath = $this->upload($request);
         $imagePath ?
             response()->json(['image_url' => $imagePath], 200) :
             response()->json([
-                'error' => $translator->translate('Must be valuable for that field image')],402);
+                'error' => $translator->translate('Must be valuable for that field image')], 402);
         // إنشاء الفئة وتخزينها
 //        dd($imagePath);
-        $category = products::create($request->only(['product_name', 'product_description','price_product','point_product','category_name','image_url','QuantityType','category_id'])); // التأكد من الحقول المطلوبة فقط
+        $category = products::create($request->only(['product_name', 'product_description', 'price_product', 'point_product', 'category_name', 'image_url', 'QuantityType', 'category_id'])); // التأكد من الحقول المطلوبة فقط
 //      dd($category);
         // التحقق من نجاح عملية إنشاء الفئة
         if ($category) {
             return response()->json([
                 'message' => $translator->translate('Product saved successfully'),
             ], 201);
-            }return response()->json([
-            'message'=>$translator->translate('failed save product')
+        }
+        return response()->json([
+            'message' => $translator->translate('failed save product')
         ]);
 
     }
@@ -100,6 +99,16 @@ class ProductController extends Controller
     public function show(string $id)
     {
         //
+        $Product = products::find($id);
+
+        if (!$Product) {
+            return response()->json([
+                'error' => 'Product not found'
+            ], 404);
+        }
+
+
+        return response()->json($Product);
     }
 
     /**

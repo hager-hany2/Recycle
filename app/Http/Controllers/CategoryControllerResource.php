@@ -89,7 +89,16 @@ class CategoryControllerResource extends Controller
      */
     public function show(string $id)
     {
-        //
+
+        // Display the specified resource.
+        $category = Categories::find($id);
+        if (!$category) {
+            return response()->json(['error' => 'Category not found'], 404);
+        }
+
+        
+
+        return response()->json($category);
     }
 
     /**
