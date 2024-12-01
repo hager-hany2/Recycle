@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UserFormRequest;
-use Illuminate\Support\Facades\Request;
+use App\Models\User;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Stichoza\GoogleTranslate\GoogleTranslate;
 
 class RegisterController extends Controller
@@ -30,7 +32,7 @@ class RegisterController extends Controller
 
         // Upload image if provided
         $imagePath = $this->upload($request);
-        $data['image_url_profile'] = $imagePath ?? asset('images/default-profile.jpg');
+        $data['image_url_profile'] = $imagePath ?? 'images/default-profile.jpg';
 
         // Hash password (use model mutator for consistency)
         $data['password'] = bcrypt($data['password']);
@@ -40,12 +42,14 @@ class RegisterController extends Controller
 
         if ($user) {
             // Generate an API token
-            $token = $user->createToken('YourAppName')->plainTextToken;
+            $token = $user->createToken($user->id, ['*'], now()->addWeek());
 
+            $expiresAt = Carbon::parse($token->accessToken->expires_at)->toDateTimeString();
             return response()->json([
                 'message' => $translate->translate('Registration successful!'),
                 'user' => $user,
-                'token' => $token,
+                'token' => $token->plainTextToken,
+                'token_expires_at' => $expiresAt,
             ], 201);
         }
 
