@@ -96,7 +96,7 @@ class CategoryControllerResource extends Controller
             return response()->json(['error' => 'Category not found'], 404);
         }
 
-        
+
 
         return response()->json($category);
     }
@@ -115,5 +115,16 @@ class CategoryControllerResource extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function showProducts($id)
+    {
+        $category = Categories::find($id);
+        if (!$category) {
+            return response()->json(['error' => 'Category not found'], 404);
+        }
+        $products = $category->products;
+        return response()->json($products);
+
     }
 }

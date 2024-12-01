@@ -15,4 +15,11 @@ class Categories extends Model
     protected $primaryKey = 'category_id';
     protected $fillable = [ 'category_id', 'category_name', 'category_description', 'user_id', 'image_url'];
 
+
+    //products
+    public function products()
+    {
+        return $this->hasMany(products::class, 'category_id', 'category_id');
+    }
+
 }

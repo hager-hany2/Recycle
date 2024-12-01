@@ -86,6 +86,8 @@ Route::get('ProductPoint/index', [ProductPointcontroller::class, 'index']);
 
 // show by id
 Route::get('/categories/{id}', [CategoryControllerResource::class, 'show'])->name('categories.show');
+Route::get('/categories/{id}/products', [CategoryControllerResource::class, 'showProducts'])->name('categories.products.show');
+
 Route::get('/products/{id}', [ProductController::class, 'show'])->name('products.show');
 Route::get('ProductPoint/{id}', [ProductPointcontroller::class, 'show']);
 //filter
