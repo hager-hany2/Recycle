@@ -13,49 +13,70 @@ class RegisterController extends Controller
 {
 
 
-    public function index(UserFormRequest $request)
+    public function index(Request $request)
     {
-        $lang = $request->header('lang', 'en');
-        $translate = new GoogleTranslate($lang);
+        try {
+            // Validate the request
+            $validatedData = $request->validate([
+                'name' => 'required|string|max:255',
+                'username' => 'required|string|max:255',
+                'email' => 'required|email|max:255|unique:users',
+                'phone' => 'required|string|max:255|unique:users',
+                'password' => 'required|string|min:6',
+            ]);
 
-        // Validate incoming request data
-        $data = $request->validated();
+            // Prepare user data with default settings
+            $data = $validatedData;
+            $data['role'] = 'user';
+            $data['category_user'] = 'home';
 
-        // Check for duplicate email or phone
-        $existingUser = User::where('email', $data['email'])->orWhere('phone', $data['phone'])->first();
-        if ($existingUser) {
-            $error = $existingUser->email === $data['email']
-                ? 'Email already exists'
-                : 'Phone already exists';
-            return response()->json(['error' => $translate->translate($error)], 409);
-        }
+            // Set language for translations, default to English
+            $lang = $request->header('lang', 'en');
+            $translate = new GoogleTranslate($lang);
 
-        // Upload image if provided
-        $imagePath = $this->upload($request);
-        $data['image_url_profile'] = $imagePath ?? 'images/default-profile.jpg';
+            // Upload image if provided, otherwise use default
+            $data['image_url_profile'] = $this->upload($request) ?? 'images/default-profile.jpg';
 
-        // Hash password (use model mutator for consistency)
-        $data['password'] = bcrypt($data['password']);
+            // Hash password securely
+            $data['password'] = bcrypt($data['password']);
 
-        // Create the new user
-        $user = User::create($data);
+            // Create the user
+            $user = User::create([
+                'name' => $data['name'],
+                'username' => $data['username'],
+                'email' => $data['email'],
+                'phone' => $data['phone'],
+                'password' => $data['password'],
+                'role' => $data['role'],
+                'category_user' => $data['category_user'],
+                'image_url_profile' => $data['image_url_profile'],
+            ]);
 
-        if ($user) {
             // Generate an API token
             $token = $user->createToken($user->id, ['*'], now()->addWeek());
-
             $expiresAt = Carbon::parse($token->accessToken->expires_at)->toDateTimeString();
             return response()->json([
-                'message' => $translate->translate('Registration successful!'),
-                'user' => $user,
+                'id' => $user->id,
+                'email' => $user->email,
+                'updated_at' => $user->updated_at,
                 'token' => $token->plainTextToken,
                 'token_expires_at' => $expiresAt,
-            ], 201);
-        }
+            ], 200);
+        } catch (\Illuminate\Validation\ValidationException $validationException) {
+            // Handle validation exceptions
+            return response()->json([
+                'error' => $validationException->errors(),
+            ], 422);
+        } catch (\Exception $e) {
+            // Handle general exceptions
+            $lang = $request->header('lang', 'en');
+            $translate = new GoogleTranslate($lang);
 
-        return response()->json([
-            'error' => $translate->translate('Registration failed'),
-        ], 500);
+            return response()->json([
+                'error' => $translate->translate('Registration failed. Please try again later.'),
+                'details' => env('APP_DEBUG') ? $e->getMessage() : null,
+            ], 500);
+        }
     }
 
     /**

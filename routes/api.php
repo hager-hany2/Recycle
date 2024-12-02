@@ -37,8 +37,6 @@ Route::group(['middleware' => 'ChangeLang'], function () {
     Route::prefix('auth')->group(function () {
         Route::any('register', [RegisterController::class, 'index'])->name('auth.register');
         Route::post('/login', [LoginController::class, 'login'])->name('auth.login');
-        Route::post('/logout', [LoginController::class, 'logout'])->name('auth.logout');
-
     });
 
     // Admin Routes
@@ -72,6 +70,8 @@ Route::middleware(['auth:api'])->prefix('profile')->group(function () {
     Route::get('/show', [ProfileController::class, 'show'])->name('profile.show');
     Route::post('/update', [ProfileController::class, 'update'])->name('profile.update');
     Route::get('/edit', [ProfileController::class, 'edit']);
+    Route::post('/logout', [LoginController::class, 'logout'])->name('auth.logout');
+
 });
 // Public Routes
 
