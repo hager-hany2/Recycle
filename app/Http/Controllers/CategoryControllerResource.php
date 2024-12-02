@@ -31,6 +31,7 @@ class CategoryControllerResource extends Controller
         // جلب جميع الفئات وترجمة الحقول المطلوبة مباشرةً
         $categories = Categories::all()->map(function ($category) use ($translator) {
             return [
+                "category_id" => $category["category_id"],
                 "category_name" => $translator->translate($category["category_name"]), // ترجمة اسم الفئة
                 "category_description" => $translator->translate($category["category_description"]), // ترجمة وصف الفئة
                 'image_url'=>$category['image_url'],//عرض الصورة
@@ -120,8 +121,10 @@ class CategoryControllerResource extends Controller
     public function showProducts($id)
     {
         $category = Categories::find($id);
+
         if (!$category) {
-            return response()->json(['error' => 'Category not found'], 404);
+            return response()->json([
+                'error' => 'Category not found'], 404);
         }
         $products = $category->products;
         return response()->json($products);

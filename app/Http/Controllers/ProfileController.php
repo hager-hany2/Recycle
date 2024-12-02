@@ -3,12 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileFormRequest;
-use App\Http\Requests\UserFormRequest;
 use App\Services\TranslationGoogle;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
+
 class ProfileController extends Controller
 {
     /**
@@ -35,6 +33,7 @@ class ProfileController extends Controller
         // تطبيق Middleware auth للتأكد من أن المستخدم مسجل الدخول
         $this->middleware('auth');
     }
+
     public function show(Request $request)
     {
         //add translate in Services
@@ -45,14 +44,18 @@ class ProfileController extends Controller
 
         return response()->json([
             'message' => $translator->translate('the data has displayed successfully'),
+            "user" => $user,
+            "name" => $user["name"] ??  $user["username"], // ترجمة اسم المستخدم
             "username" => $translator->translate($user["username"]), // ترجمة اسم المستخدم
             'email' => $user['email'],
             'image_url_profile' => $user['image_url_profile'],
             'phone' => $user['phone'],
             "role" => $translator->translate($user["role"]), // ترجمة النوع
             "category_user" => $translator->translate($user["category_user"]), // ترجمة النوع
-            'price'=> $translator->translate($user["price"]),
-            'point'=> $translator->translate($user["point"]),
+            'price' => $translator->translate($user["price"]),
+            'point' => $translator->translate($user["point"]),
+            "created_at" => $user["created_at"],
+            "gender" => $user["Gender"],
 
         ], 201);
     }
@@ -69,7 +72,7 @@ class ProfileController extends Controller
         // call in new object TranslationGoogle and add url use App\Services\TranslationGoogle; because porotect must inhert this function
         $user = Auth::user();
 
-        if(!$user){
+        if (!$user) {
 
             return response()->json([
                 'message' => $translator->translate('the user is not found'),
@@ -80,6 +83,7 @@ class ProfileController extends Controller
             'message' => $translator->translate('updated successfully'),
         ], 201);
     }
+
     public function edit(Request $request)
     {
         $lang = $request->header('lang', 'en');
@@ -93,10 +97,11 @@ class ProfileController extends Controller
             'phone' => $user['phone'],
             "role" => $translator->translate($user["role"]), // ترجمة النوع
             "category_user" => $translator->translate($user["category_user"]), // ترجمة النوع
-            'price'=> $translator->translate($user["price"]),
-            'point'=> $translator->translate($user["point"]),
+            'price' => $translator->translate($user["price"]),
+            'point' => $translator->translate($user["point"]),
         ], 200); // إعادة البيانات بصيغة JSON
     }
+
     /**
      * Remove the specified resource from storage.
      */
