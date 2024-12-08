@@ -26,7 +26,9 @@ class RegisterController extends Controller
             $data = $validatedData;
             $data['role'] = 'user';
             $data['category_user'] = 'home';
-            $data['image_url_profile'] = $this->upload($request) ?? 'images/default-profile.jpg';
+            // Random Number 1 to 100
+            $number = rand(1, 100);
+            $data['image_url'] = $number . '.png';
             $data['password'] = bcrypt($data['password']);
 
             $user = User::create($data);

@@ -50,6 +50,7 @@ class LoginController extends Controller
             return response()->json([
                 'id' => $user->id,
                 'email' => $user->email,
+                'avatar' => asset('/avatars/' . $user->image_url),
                 'updated_at' => $user->updated_at,
                 'token' => $token->plainTextToken,
                 'token_expires_at' => $expiresAt,

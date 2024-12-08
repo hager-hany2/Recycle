@@ -45,10 +45,11 @@ class ProfileController extends Controller
         return response()->json([
             'message' => $translator->translate('the data has displayed successfully'),
             "user" => $user,
+            "avatar" => asset('/avatars/'.$user->image_url),
             "name" => $user["name"] ??  $user["username"], // ترجمة اسم المستخدم
             "username" => $translator->translate($user["username"]), // ترجمة اسم المستخدم
             'email' => $user['email'],
-            'image_url_profile' => $user['image_url_profile'],
+            'image_url_profile' => asset('/avatars/'.$user->image_url),
             'phone' => $user['phone'],
             "role" => $translator->translate($user["role"]), // ترجمة النوع
             "category_user" => $translator->translate($user["category_user"]), // ترجمة النوع
