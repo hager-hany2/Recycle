@@ -68,8 +68,7 @@ Route::group(['middleware' => 'ChangeLang'], function () {
 // Profile Routes
 Route::middleware(['auth:api'])->prefix('profile')->group(function () {
     Route::get('/show', [ProfileController::class, 'show'])->name('profile.show');
-    Route::post('/update', [ProfileController::class, 'update'])->name('profile.update');
-    Route::get('/edit', [ProfileController::class, 'edit']);
+    Route::post('/update/{id}', [ProfileController::class, 'update'])->name('profile.update');
     Route::post('/logout', [LoginController::class, 'logout'])->name('auth.logout');
 
 });
