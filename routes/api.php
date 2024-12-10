@@ -55,7 +55,6 @@ Route::group(['middleware' => 'ChangeLang'], function () {
     Route::middleware(['auth:api'])->group(function () {
         // Payment Routes
         Route::prefix('payment')->group(function () {
-//        Route::post('/callback', [PaymentController::class, 'handleCallback'])->name('vodafone.callback');
             Route::post('/', [PaymentController::class, 'store'])->name('payment.store');
         });
         // Order Routes
