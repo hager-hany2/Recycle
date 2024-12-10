@@ -65,42 +65,36 @@ class ProfileController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(ProfileFormRequest $request, string $id)
+      public function update(Request $request,$id)
     {
-        //add translate in Services
         $lang = $request->header('lang', 'en');
         $translator = new TranslationGoogle($lang);
-        // call in new object TranslationGoogle and add url use App\Services\TranslationGoogle; because porotect must inhert this function
-        $user = Auth::user();
+        $user = \App\Models\User::find($id);
 
         if (!$user) {
-
-            return response()->json([
+          return response()->json([
                 'message' => $translator->translate('the user is not found'),
             ], 201);
         }
-        $user->update($request->validated());
-        return response()->json([
-            'message' => $translator->translate('updated successfully'),
-        ], 201);
-    }
 
-    public function edit(Request $request)
-    {
-        $lang = $request->header('lang', 'en');
-        $translator = new TranslationGoogle($lang);
-        // call in new object TranslationGoogle and add url use App\Services\TranslationGoogle; because porotect must inhert this function
-        $user = auth()->user(); // جلب بيانات المستخدم الحالي
-        return response()->json([
-            'message' => $translator->translate('the user is found'),
-            "username" => $translator->translate($user["username"]), // ترجمة اسم المستخدم
-            'email' => $user['email'],
-            'phone' => $user['phone'],
-            "role" => $translator->translate($user["role"]), // ترجمة النوع
-            "category_user" => $translator->translate($user["category_user"]), // ترجمة النوع
-            'price' => $translator->translate($user["price"]),
-            'point' => $translator->translate($user["point"]),
-        ], 200); // إعادة البيانات بصيغة JSON
+        // 2. التحقق من البيانات المدخلة
+        $validated = $request->validate([
+            'username' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $id,
+            'password' => 'nullable|string|min:8|confirmed',
+        ]);
+
+        // 3. تحديث البيانات
+        $user->username = $validated['username'];
+        $user->email = $validated['email'];
+
+        if (!empty($validated['password'])) {
+            $user->password = bcrypt($validated['password']);
+        }
+
+        $user->save();
+
+        return response()->json([  'message' => $translator->translate('updated successfully'), 'user' => $user]);
     }
 
     /**
