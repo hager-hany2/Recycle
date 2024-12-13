@@ -81,7 +81,7 @@ class ProfileController extends Controller
         $validated = $request->validate([
             'username' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $id,
-            'password' => 'nullable|string|min:8|confirmed',
+            'password' => 'nullable|string|min:6|confirmed',
         ]);
 
         // 3. تحديث البيانات
