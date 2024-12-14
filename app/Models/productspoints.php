@@ -10,5 +10,5 @@ class productspoints extends Model
 {
     use HasFactory, SoftDeletes;
     protected $primaryKey = 'ProductsPoints_id';
-protected $fillable=['user_id','ProductsPoints_id','name','point','image_url'];
+protected $fillable=['ProductsPoints_id','name','point','image_url'];
 }
