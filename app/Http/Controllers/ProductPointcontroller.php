@@ -67,7 +67,7 @@ class ProductPointcontroller extends Controller
             response()->json([
                 'error' => $translator->translate('Must be valuable for that field image')],402);
         // إنشاء الفئة وتخزينها
-        $category = productspoints::create($request->only(['user_id', 'ProductsPoints_id','name','point','image_url'])); // التأكد من الحقول المطلوبة فقط
+        $category = productspoints::create($request->only(['ProductsPoints_id','name','point','image_url'])); // التأكد من الحقول المطلوبة فقط
 
         // التحقق من نجاح عملية إنشاء الفئة
         if ($category) {
