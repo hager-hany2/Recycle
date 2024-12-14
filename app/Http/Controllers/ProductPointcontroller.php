@@ -83,17 +83,15 @@ class ProductPointcontroller extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+      public function show(string $id)
     {
 
        $productspoints = productspoints::find($id);
         if ($productspoints) {
             return response()->json($productspoints);
         }
-        return response()->json(['error' => 'Product not found'], 404);
-
-
-        return response()->json($productspoints);
+        return response()->json(['error' => 'ProductPoint not found'], 404);
+        
     }
 
     /**
