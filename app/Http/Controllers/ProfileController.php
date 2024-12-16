@@ -65,37 +65,44 @@ class ProfileController extends Controller
     /**
      * Update the specified resource in storage.
      */
-      public function update(Request $request,$id)
+    public function update(Request $request, $id)
     {
         $lang = $request->header('lang', 'en');
         $translator = new TranslationGoogle($lang);
         $user = \App\Models\User::find($id);
 
+        // Check if the user exists
         if (!$user) {
-          return response()->json([
-                'message' => $translator->translate('the user is not found'),
-            ], 201);
+            return response()->json([
+                'message' => $translator->translate('The user is not found')
+            ], 404); // 404 Not Found
         }
 
-        // 2. التحقق من البيانات المدخلة
+        // Validate the request data
         $validated = $request->validate([
-            'username' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $id,
-            'password' => 'nullable|string|min:8|confirmed',
+            'username' => 'required|string|regex:/^[A-Za-z0-9]+$/|max:255|unique:users,username,' . $id, // Unique username validation
+            'email' => 'required|email|unique:users,email,' . $id, // Unique email validation
+            'password' => 'nullable|string|min:8',
         ]);
 
-        // 3. تحديث البيانات
+        // Update user details
         $user->username = $validated['username'];
         $user->email = $validated['email'];
 
+        // Update password only if provided
         if (!empty($validated['password'])) {
             $user->password = bcrypt($validated['password']);
         }
 
+        // Save the updated user
         $user->save();
 
-        return response()->json([  'message' => $translator->translate('updated successfully'), 'user' => $user]);
+        return response()->json([
+            'message' => $translator->translate('Updated successfully'),
+            'user' => $user
+        ], 200); // 200 OK
     }
+
 
     /**
      * Remove the specified resource from storage.

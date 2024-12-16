@@ -16,12 +16,22 @@ class RegisterController extends Controller
     public function index(Request $request)
     {
         try {
+
+
+
+            //username Validation
+            $username = $request->username;
+
+
+
+
             $validatedData = $request->validate([
-                'username' => 'required|string|max:255',
+                'username' => 'required|string|max:255|min:3|unique:users|regex:/^\\S+$/',
                 'email' => 'required|email|max:255|unique:users',
                 'phone' => 'required|string|max:255|unique:users',
                 'password' => 'required|string|min:6',
             ]);
+
 
             $data = $validatedData;
             $data['role'] = 'user';
@@ -40,6 +50,7 @@ class RegisterController extends Controller
                 'email' => $user->email,
                 'token' => $token->plainTextToken,
                 'token_expires_at' => $expiresAt,
+                'avatar' => url(asset('/avatars/' . $user->image_url)),
             ], 200);
         } catch (\Illuminate\Validation\ValidationException $validationException) {
             return response()->json(['error' => $validationException->errors()], 422);

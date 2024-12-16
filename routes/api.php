@@ -67,7 +67,7 @@ Route::group(['middleware' => 'ChangeLang'], function () {
 // Profile Routes
 Route::middleware(['auth:api'])->prefix('profile')->group(function () {
     Route::get('/show', [ProfileController::class, 'show'])->name('profile.show');
-    Route::post('/update/{id}', [ProfileController::class, 'update'])->name('profile.update');
+    Route::put('/update/{id}', [ProfileController::class, 'update'])->name('profile.update');
     Route::post('/logout', [LoginController::class, 'logout'])->name('auth.logout');
 
 });
@@ -80,6 +80,12 @@ Route::get('/search', [SearchController::class, 'search'])->name('search');
 Route::get('/categories/index', [CategoryControllerResource::class, 'index']);
 Route::get('/products/index', [ProductController::class, 'index'])->name('products.index');
 Route::get('ProductPoint/index', [ProductPointcontroller::class, 'index']);
+
+
+// Get Products Points
+Route::get('/products/points/all', [ProductPointcontroller::class, 'getProductsPoints'])->name('products.points.index');
+
+
 
 
 // show by id

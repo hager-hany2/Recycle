@@ -9,6 +9,16 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class productspoints extends Model
 {
     use HasFactory, SoftDeletes;
-    protected $primaryKey = 'ProductsPoints_id';
-protected $fillable=['user_id','ProductsPoints_id','name','point','image_url'];
+
+    // key
+    protected $primaryKey = 'id';
+    protected $table = 'productspoints';
+    protected $guarded = [];
+
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
 }

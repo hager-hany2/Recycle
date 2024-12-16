@@ -2,17 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ProductFormRequest;
-use App\Models\products;
+use App\Http\Requests\ProductPointFormRequest;
 use App\Models\productspoints;
 use App\Services\TranslationGoogle;
-use Illuminate\Http\Request;
 use App\traits\upload_image;
-use App\Http\Requests\ProductPointFormRequest;
+use Illuminate\Http\Request;
 
 class ProductPointcontroller extends Controller
 {
     use upload_image;
+
     /**
      * Display a listing of the resource.
      */
@@ -46,6 +45,24 @@ class ProductPointcontroller extends Controller
     }
 
 
+    // Get All Products Points
+
+    public function getProductsPoints(Request $request)
+    {
+        try {
+            $productspoints = productspoints::all();
+            if ($productspoints->isEmpty()) {
+                return response()->json(['error' => 'No products found'], 404);
+            }
+
+            return response()->json($productspoints, 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'An unexpected error occurred'], 500);
+        }
+    }
+
+
+
     /**
      * Store a newly created resource in storage.
      */
@@ -56,7 +73,7 @@ class ProductPointcontroller extends Controller
         $translator = new TranslationGoogle($lang);
         // call in new object TranslationGoogle and add url use App\Services\TranslationGoogle; because porotect must inhert this function
 //        dd($lang); //test lang
-        $data=$request->validated();
+        $data = $request->validated();
 //        dd($data);
         $existing_product = productspoints::where('name', $request->name)->first();
 
@@ -65,18 +82,19 @@ class ProductPointcontroller extends Controller
         $imagePath ?
             response()->json(['image_url' => $imagePath], 200) :
             response()->json([
-                'error' => $translator->translate('Must be valuable for that field image')],402);
+                'error' => $translator->translate('Must be valuable for that field image')], 402);
         // إنشاء الفئة وتخزينها
-        $category = productspoints::create($request->only(['user_id', 'ProductsPoints_id','name','point','image_url'])); // التأكد من الحقول المطلوبة فقط
+        $category = productspoints::create($request->only(['user_id', 'ProductsPoints_id', 'name', 'point', 'image_url'])); // التأكد من الحقول المطلوبة فقط
 
         // التحقق من نجاح عملية إنشاء الفئة
         if ($category) {
             return response()->json([
                 'message' => $translator->translate('Product saved successfully'),
             ], 201);
-        }return response()->json([
-        'message'=>$translator->translate('failed save product')
-    ]);
+        }
+        return response()->json([
+            'message' => $translator->translate('failed save product')
+        ]);
 
     }
 
@@ -86,7 +104,7 @@ class ProductPointcontroller extends Controller
     public function show(string $id)
     {
 
-       $productspoints = productspoints::find($id);
+        $productspoints = productspoints::find($id);
         if ($productspoints) {
             return response()->json($productspoints);
         }
