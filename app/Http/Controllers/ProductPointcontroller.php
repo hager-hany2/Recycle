@@ -9,7 +9,7 @@ use App\Traits\UploadImage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
-class ProductPointController extends Controller
+class ProductPointcontroller extends Controller
 {
     use UploadImage;
 
