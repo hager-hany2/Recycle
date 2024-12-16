@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use App\Models\Images;
 
 
 class User extends Authenticatable
@@ -20,6 +19,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
+
         'username',
         'email',
         'password',
@@ -30,9 +30,10 @@ class User extends Authenticatable
         'point',
         'image_url'
     ];
+
     public function setPasswordAttribute($val)
     {
-        $this->attributes['password']=bcrypt($val);//hashed
+        $this->attributes['password'] = bcrypt($val);//hashed
     }
 
 

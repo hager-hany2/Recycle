@@ -22,7 +22,7 @@ class ProductPointFormRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "user_id" => 'required',
+            // "user_id" => 'required',
             "name" =>'required',
             "point" =>'filled',
             "image_url" => 'required',
@@ -32,7 +32,7 @@ class ProductPointFormRequest extends FormRequest
     }
     public function attributes(){
         return[
-            'user_id'=>__('keywords.user_id'),
+            // 'user_id'=>__('keywords.user_id'),
             'name'=>__('keywords.name'),
             'image_url'=>__('keywords.image_url_product'),
             'point'=>__('keywords.point'),
@@ -42,7 +42,7 @@ class ProductPointFormRequest extends FormRequest
     public function messages()
     {
         return[
-            'user_id.required'=>__('keywords.error_msg_user_id'),
+            // 'user_id.required'=>__('keywords.error_msg_user_id'),
             'image_url.required'=>__('keywords.error_msg_image_url'),
             'name'=>__('keywords.error_msg_name'),
             'point'=>__('keywords.error_msg_point')

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('username');
+            $table->string('username')->unique();
             $table->string('email')->unique();
             $table->string('phone');
             $table->timestamp('email_verified_at')->nullable();
@@ -24,7 +24,7 @@ return new class extends Migration
             $table->integer('price')->default(0);
             $table->integer('point')->default(0);
             $table->tinyInteger('is_locked')->default(0);//tiny integer نوع البيانات بس ارقام عددية صغيربة جدا بين 0 الي 225
-            $table->string('image_url')->default('images/96fe121-5dfa-43f4-98b5-db50019738a7.jpg');
+            $table->string('image_url')->default('1');
             $table->enum('Gender',['female','male']);
             $table->rememberToken();
             $table->timestamps();

@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Orderpoints extends Model
 {
     use HasFactory,SoftDeletes;
+    protected $primaryKey = 'OrderPoint_id';
     protected $fillable=['OrderPoint_id','ProductsPoints_id','user_id', 'address','phone','status','total_price','quantity'];
     public function user()
     {
@@ -16,7 +17,7 @@ class Orderpoints extends Model
     }
     public function product()
     {
-        return $this->belongsTo(productspoints::class,'ProductsPoints_id', 'ProductsPoints_id')->withTrashed();
+        return $this->belongsTo(productspoints::class,'ProductsPoints_id', 'id')->withTrashed();
     }
 
 }

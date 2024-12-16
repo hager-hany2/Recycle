@@ -3,43 +3,111 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\UserFormlogin;
 use App\Services\TranslationGoogle;
+use Carbon\Carbon;
+use Exception;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 
 class LoginController extends Controller
 {
     /**
      * Handle user login.
      *
-     * @param UserFormlogin $request
-     * @return \Illuminate\Http\JsonResponse
+     * @param Request $request
+     * @return JsonResponse
      */
-    public function login(UserFormlogin $request)
+    public function login(Request $request): JsonResponse
     {
-        // Set default language to 'en' if 'lang' header is not provided
-        $lang = $request->header('lang', 'en');
+        try {
+            // Set default language to 'en' if 'lang' header is not provided
+            $lang = $request->header('lang', 'en');
+            $translator = new TranslationGoogle($lang);
 
-        // Initialize the translation service
-        $translate = new TranslationGoogle($lang);
+            // Validate user input
+            $validatedData = $request->validate([
+                'email' => 'required|email|max:255',
+                'password' => 'required|string|min:6',
+            ]);
 
-        // Validate user input using the custom form request
-        $credentials = $request->validated();
+            // Attempt authentication
+            if (!Auth::attempt($validatedData)) {
+                return response()->json([
+                    'error' => $translator->translate('Invalid email or password.'),
+                ], 401);
+            }
 
-        // __('')
+            $user = Auth::user();
 
-        // Attempt to authenticate the user
-        if (auth()->attempt($credentials)) {
-            $user = auth()->user(); // Get authenticated user details
+            // Create a personal access token for the user
+            $token = $user->createToken($user->id, ['*'], now()->addWeek());
+
+            $expiresAt = Carbon::parse($token->accessToken->expires_at)->toDateTimeString();
+
 
             return response()->json([
-                'message' => $translate->translate('Login successful'),
-                'user' => $user // Optionally include user data in the response
-            ]);
-        }
+                'id' => $user->id,
+                'email' => $user->email,
+                'avatar' => url(asset('/avatars/' . $user->image_url)),
+                'updated_at' => $user->updated_at,
+                'token' => $token->plainTextToken,
+                'token_expires_at' => $expiresAt,
 
-        // Return an error if authentication fails
-        return response()->json([
-            'error' => $translate->translate('Email or password is incorrect')
-        ], 405);
+            ], 200);
+
+        } catch (ValidationException $e) {
+            return response()->json([
+                'error' => $translator->translate('Validation error.'),
+                'details' => $e->errors(),
+            ], 422);
+        } catch (Exception $e) {
+            return response()->json([
+                'error' => $translator->translate('An unexpected error occurred.'),
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Handle user logout.
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function logout(Request $request): JsonResponse
+    {
+        try {
+            $user = Auth::user();
+
+            if (!$user) {
+                return response()->json([
+                    'error' => 'User is not authenticated.',
+                ], 401);
+            }
+
+            // If logout from all devices is requested
+            if ($request->boolean('allDevice')) {
+                $user->tokens()->delete();
+
+                return response()->json([
+                    'message' => 'Logged out from all devices successfully.',
+                ], 200);
+            }
+
+            // Logout from the current device
+            $user->currentAccessToken()->delete();
+
+            return response()->json([
+                'message' => 'Logged out successfully.',
+            ], 200);
+
+        } catch (Exception $e) {
+            return response()->json([
+                'error' => 'An unexpected error occurred during logout.',
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
 }

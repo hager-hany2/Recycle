@@ -3,11 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileFormRequest;
-use App\Http\Requests\UserFormRequest;
 use App\Services\TranslationGoogle;
-use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
+
 class ProfileController extends Controller
 {
     /**
@@ -27,76 +26,85 @@ class ProfileController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Constructor method.
+     * Apply auth middleware to ensure that the user is logged in.
      */
     public function __construct()
     {
-        // تطبيق Middleware auth للتأكد من أن المستخدم مسجل الدخول
         $this->middleware('auth');
     }
-    public function show(string $id,Request $request)
-    {
-        //add translate in Services
-        $lang = $request->header('lang', 'en');
-        $translator = new TranslationGoogle($lang);
-        // call in new object TranslationGoogle and add url use App\Services\TranslationGoogle; because porotect must inhert this function
-        $user = User::find($id);
-
-        return response()->json([
-            'message' => $translator->translate('the data has displayed successfully'),
-            "username" => $translator->translate($user["username"]), // ترجمة اسم المستخدم
-            'email' => $user['email'],
-            'image_url_profile' => $user['image_url_profile'],
-            'phone' => $user['phone'],
-            'password'=>$user['password'],
-            "role" => $translator->translate($user["role"]), // ترجمة النوع
-            "category_user" => $translator->translate($user["category_user"]), // ترجمة النوع
-            'price'=> $translator->translate($user["price"]),
-            'point'=> $translator->translate($user["point"]),
-
-        ], 201);
-    }
-
 
     /**
-     * Update the specified resource in storage.
+     * Display the authenticated user's profile information.
      */
-    public function update(ProfileFormRequest $request, string $id)
+    public function show(Request $request)
     {
-        //add translate in Services
+        // Add translation service
         $lang = $request->header('lang', 'en');
         $translator = new TranslationGoogle($lang);
-        // call in new object TranslationGoogle and add url use App\Services\TranslationGoogle; because porotect must inhert this function
-        $user = User::find($id);
-        if(!$user){
 
-            return response()->json([
-                'message' => $translator->translate('the user is not found'),
-            ], 201);
-        }
-        $user->update($request->validated());
+        // Call the TranslationGoogle service and ensure it inherits the necessary methods
+        $user = Auth::user(); // Get the current authenticated user
+
         return response()->json([
-            'message' => $translator->translate('updated successfully'),
+            'message' => $translator->translate('The data has been displayed successfully'),
+            "user" => $user,
+            "avatar" => asset('/avatars/' . $user->image_url),
+            "name" => $user["name"] ??  $user["username"], // Translated user name
+            "username" => $translator->translate($user["username"]), // Translated username
+            'email' => $user['email'],
+            'image_url_profile' => asset('/avatars/' . $user->image_url),
+            'phone' => $user['phone'],
+            "role" => $translator->translate($user["role"]), // Translated role
+            "category_user" => $translator->translate($user["category_user"]), // Translated user category
+            'price' => $translator->translate($user["price"]),
+            'point' => $translator->translate($user["point"]),
+            "created_at" => $user["created_at"],
+            "gender" => $user["Gender"],
         ], 201);
     }
-    public function edit($request)
+
+    /**
+     * Update the specified user's information in storage.
+     */
+    public function update(Request $request, $id)
     {
         $lang = $request->header('lang', 'en');
         $translator = new TranslationGoogle($lang);
-        // call in new object TranslationGoogle and add url use App\Services\TranslationGoogle; because porotect must inhert this function
-        $user = auth()->user(); // جلب بيانات المستخدم الحالي
+        $user = \App\Models\User::find($id);
+
+        // Check if the user exists
+        if (!$user) {
+            return response()->json([
+                'message' => $translator->translate('The user was not found')
+            ], 404); // 404 Not Found
+        }
+
+        // Validate the request data
+        $validated = $request->validate([
+            'username' => 'required|string|regex:/^[A-Za-z0-9]+$/|max:255|unique:users,username,' . $id, // Unique username validation
+            'email' => 'required|email|unique:users,email,' . $id, // Unique email validation
+            'password' => 'nullable|string|min:8',
+        ]);
+
+        // Update user details
+        $user->username = $validated['username'];
+        $user->email = $validated['email'];
+
+        // Update password only if provided
+        if (!empty($validated['password'])) {
+            $user->password = bcrypt($validated['password']);
+        }
+
+        // Save the updated user
+        $user->save();
+
         return response()->json([
-            'message' => $translator->translate('the user is not found'),
-            "username" => $translator->translate($user["username"]), // ترجمة اسم المستخدم
-            'email' => $user['email'],
-            'phone' => $user['phone'],
-            'password'=>$user['password'],
-            "role" => $translator->translate($user["role"]), // ترجمة النوع
-            "category_user" => $translator->translate($user["category_user"]), // ترجمة النوع
-            'price'=> $translator->translate($user["price"]),
-            'point'=> $translator->translate($user["point"]),
-        ], 200); // إعادة البيانات بصيغة JSON
+            'message' => $translator->translate('Updated successfully'),
+            'user' => $user
+        ], 200); // 200 OK
     }
+
     /**
      * Remove the specified resource from storage.
      */

@@ -30,8 +30,6 @@ class UserFormRequest extends FormRequest
             'email'=>'required|email|unique:users,id',
             'phone'=>'required|unique:users,id',
             'password'=>'required',
-            'role'=>'required',
-            'category_user' =>'required' ,
             // استخدمي 'sometimes' بدل 'filled' للتحقق من وجود الحقل فقط إذا كان موجودًا
             'price'=>'filled|numeric',
             'point'=>'filled|numeric',

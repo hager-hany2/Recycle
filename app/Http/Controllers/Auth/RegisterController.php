@@ -4,54 +4,59 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UserFormRequest;
-use Illuminate\Support\Facades\Request;
+use App\Models\User;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Stichoza\GoogleTranslate\GoogleTranslate;
 
 class RegisterController extends Controller
 {
 
 
-    public function index(UserFormRequest $request)
+    public function index(Request $request)
     {
-        $lang = $request->header('lang', 'en');
-        $translate = new GoogleTranslate($lang);
+        try {
 
-        // Validate incoming request data
-        $data = $request->validated();
 
-        // Check for duplicate email or phone
-        $existingUser = User::where('email', $data['email'])->orWhere('phone', $data['phone'])->first();
-        if ($existingUser) {
-            $error = $existingUser->email === $data['email']
-                ? 'Email already exists'
-                : 'Phone already exists';
-            return response()->json(['error' => $translate->translate($error)], 409);
-        }
 
-        // Upload image if provided
-        $imagePath = $this->upload($request);
-        $data['image_url_profile'] = $imagePath ?? asset('images/default-profile.jpg');
+            //username Validation
+            $username = $request->username;
 
-        // Hash password (use model mutator for consistency)
-        $data['password'] = bcrypt($data['password']);
 
-        // Create the new user
-        $user = User::create($data);
 
-        if ($user) {
-            // Generate an API token
-            $token = $user->createToken('YourAppName')->plainTextToken;
+
+            $validatedData = $request->validate([
+                'username' => 'required|string|max:255|min:3|unique:users|regex:/^\\S+$/',
+                'email' => 'required|email|max:255|unique:users',
+                'phone' => 'required|string|max:255|unique:users',
+                'password' => 'required|string|min:6',
+            ]);
+
+
+            $data = $validatedData;
+            $data['role'] = 'user';
+            $data['category_user'] = 'home';
+            // Random Number 1 to 100
+            $number = rand(1, 100);
+            $data['image_url'] = $number . '.png';
+            $data['password'] = bcrypt($data['password']);
+
+            $user = User::create($data);
+            $token = $user->createToken($user->id, ['*'], now()->addWeek());
+            $expiresAt = Carbon::parse($token->accessToken->expires_at)->toDateTimeString();
 
             return response()->json([
-                'message' => $translate->translate('Registration successful!'),
-                'user' => $user,
-                'token' => $token,
-            ], 201);
+                'id' => $user->id,
+                'email' => $user->email,
+                'token' => $token->plainTextToken,
+                'token_expires_at' => $expiresAt,
+                'avatar' => url(asset('/avatars/' . $user->image_url)),
+            ], 200);
+        } catch (\Illuminate\Validation\ValidationException $validationException) {
+            return response()->json(['error' => $validationException->errors()], 422);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Registration failed.'], 500);
         }
-
-        return response()->json([
-            'error' => $translate->translate('Registration failed'),
-        ], 500);
     }
 
     /**
