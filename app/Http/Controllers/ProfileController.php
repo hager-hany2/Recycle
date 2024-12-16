@@ -26,44 +26,46 @@ class ProfileController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Constructor method.
+     * Apply auth middleware to ensure that the user is logged in.
      */
     public function __construct()
     {
-        // تطبيق Middleware auth للتأكد من أن المستخدم مسجل الدخول
         $this->middleware('auth');
     }
 
+    /**
+     * Display the authenticated user's profile information.
+     */
     public function show(Request $request)
     {
-        //add translate in Services
+        // Add translation service
         $lang = $request->header('lang', 'en');
         $translator = new TranslationGoogle($lang);
-        // call in new object TranslationGoogle and add url use App\Services\TranslationGoogle; because porotect must inhert this function
-        $user = Auth::user(); // جلب بيانات المستخدم الحالي
+
+        // Call the TranslationGoogle service and ensure it inherits the necessary methods
+        $user = Auth::user(); // Get the current authenticated user
 
         return response()->json([
-            'message' => $translator->translate('the data has displayed successfully'),
+            'message' => $translator->translate('The data has been displayed successfully'),
             "user" => $user,
-            "avatar" => asset('/avatars/'.$user->image_url),
-            "name" => $user["name"] ??  $user["username"], // ترجمة اسم المستخدم
-            "username" => $translator->translate($user["username"]), // ترجمة اسم المستخدم
+            "avatar" => asset('/avatars/' . $user->image_url),
+            "name" => $user["name"] ??  $user["username"], // Translated user name
+            "username" => $translator->translate($user["username"]), // Translated username
             'email' => $user['email'],
-            'image_url_profile' => asset('/avatars/'.$user->image_url),
+            'image_url_profile' => asset('/avatars/' . $user->image_url),
             'phone' => $user['phone'],
-            "role" => $translator->translate($user["role"]), // ترجمة النوع
-            "category_user" => $translator->translate($user["category_user"]), // ترجمة النوع
+            "role" => $translator->translate($user["role"]), // Translated role
+            "category_user" => $translator->translate($user["category_user"]), // Translated user category
             'price' => $translator->translate($user["price"]),
             'point' => $translator->translate($user["point"]),
             "created_at" => $user["created_at"],
             "gender" => $user["Gender"],
-
         ], 201);
     }
 
-
     /**
-     * Update the specified resource in storage.
+     * Update the specified user's information in storage.
      */
     public function update(Request $request, $id)
     {
@@ -74,21 +76,15 @@ class ProfileController extends Controller
         // Check if the user exists
         if (!$user) {
             return response()->json([
-                'message' => $translator->translate('The user is not found')
+                'message' => $translator->translate('The user was not found')
             ], 404); // 404 Not Found
         }
 
         // Validate the request data
         $validated = $request->validate([
-<<<<<<< HEAD
             'username' => 'required|string|regex:/^[A-Za-z0-9]+$/|max:255|unique:users,username,' . $id, // Unique username validation
             'email' => 'required|email|unique:users,email,' . $id, // Unique email validation
             'password' => 'nullable|string|min:8',
-=======
-            'username' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $id,
-            'password' => 'nullable|string|min:6|confirmed',
->>>>>>> 0300525f4a97b5eec70b92647ce911221f0f9110
         ]);
 
         // Update user details
@@ -108,7 +104,6 @@ class ProfileController extends Controller
             'user' => $user
         ], 200); // 200 OK
     }
-
 
     /**
      * Remove the specified resource from storage.
