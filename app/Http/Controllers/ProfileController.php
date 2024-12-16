@@ -80,9 +80,15 @@ class ProfileController extends Controller
 
         // Validate the request data
         $validated = $request->validate([
+<<<<<<< HEAD
             'username' => 'required|string|regex:/^[A-Za-z0-9]+$/|max:255|unique:users,username,' . $id, // Unique username validation
             'email' => 'required|email|unique:users,email,' . $id, // Unique email validation
             'password' => 'nullable|string|min:8',
+=======
+            'username' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $id,
+            'password' => 'nullable|string|min:6|confirmed',
+>>>>>>> 0300525f4a97b5eec70b92647ce911221f0f9110
         ]);
 
         // Update user details

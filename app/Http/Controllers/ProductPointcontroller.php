@@ -84,7 +84,11 @@ class ProductPointcontroller extends Controller
             response()->json([
                 'error' => $translator->translate('Must be valuable for that field image')], 402);
         // إنشاء الفئة وتخزينها
+<<<<<<< HEAD
         $category = productspoints::create($request->only(['user_id', 'ProductsPoints_id', 'name', 'point', 'image_url'])); // التأكد من الحقول المطلوبة فقط
+=======
+        $category = productspoints::create($request->only(['ProductsPoints_id','name','point','image_url'])); // التأكد من الحقول المطلوبة فقط
+>>>>>>> 0300525f4a97b5eec70b92647ce911221f0f9110
 
         // التحقق من نجاح عملية إنشاء الفئة
         if ($category) {
@@ -101,17 +105,15 @@ class ProductPointcontroller extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+      public function show(string $id)
     {
 
         $productspoints = productspoints::find($id);
         if ($productspoints) {
             return response()->json($productspoints);
         }
-        return response()->json(['error' => 'Product not found'], 404);
-
-
-        return response()->json($productspoints);
+        return response()->json(['error' => 'ProductPoint not found'], 404);
+        
     }
 
     /**
