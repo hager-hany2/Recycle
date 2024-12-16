@@ -49,7 +49,7 @@ class ProfileController extends Controller
         return response()->json([
             'message' => $translator->translate('The data has been displayed successfully'),
             "user" => $user,
-            "avatar" => asset('/avatars/' . $user->image_url),
+            "avatar" => url(asset('/avatars/' . $user->image_url)),
             "name" => $user["name"] ??  $user["username"], // Translated user name
             "username" => $translator->translate($user["username"]), // Translated username
             'email' => $user['email'],
@@ -71,7 +71,7 @@ class ProfileController extends Controller
     {
         $lang = $request->header('lang', 'en');
         $translator = new TranslationGoogle($lang);
-        $user = \App\Models\User::find($id);
+        $user = Auth::user();
 
         // Check if the user exists
         if (!$user) {
@@ -85,6 +85,7 @@ class ProfileController extends Controller
             'username' => 'required|string|regex:/^[A-Za-z0-9]+$/|max:255|unique:users,username,' . $id, // Unique username validation
             'email' => 'required|email|unique:users,email,' . $id, // Unique email validation
             'password' => 'nullable|string|min:8',
+            'avatar' => 'integer|between:1,80', // Ensure 'avatar' is an integer within 1 to 80
         ]);
 
         // Update user details
