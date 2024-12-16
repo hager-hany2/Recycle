@@ -30,6 +30,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return Auth::user();
 });
 
+Route::post('/chatbot', [\App\Http\Controllers\ChatHistoryController::class, 'interactWithChatbot']);
 
 Route::group(['middleware' => 'ChangeLang'], function () {
 

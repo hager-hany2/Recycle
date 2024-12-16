@@ -44,6 +44,8 @@ return [
 
     'debug' => (bool) env('APP_DEBUG', false),
 
+    'flask_api_url' => env('FLASK_API_URL', 'http://127.0.0.1:5000/chat'),
+
     /*
     |--------------------------------------------------------------------------
     | Application URL
