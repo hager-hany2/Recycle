@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ProductFormRequest;
 use App\Models\products;
 use App\Services\TranslationGoogle;
-use App\traits\upload_image;
+use App\traits\UploadImage;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -13,7 +13,7 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    use upload_image;
+    use UploadImage;
 
     public function index(Request $request)
     {

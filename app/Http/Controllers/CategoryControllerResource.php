@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\CategoryResource;
 use App\Models\User;
-use App\traits\upload_image;
+use App\traits\UploadImage;
 use Illuminate\Http\Request;
 use App\Http\Requests\CategoryFormRequest;
 use Illuminate\Support\Facades\Storage;
@@ -19,7 +19,7 @@ class CategoryControllerResource extends Controller
     /**
      * Display a listing of the resource.
      */
-    use upload_image;
+    use UploadImage;
     public function index(Request $request)
     {
         //add translate in Services

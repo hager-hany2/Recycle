@@ -17,7 +17,7 @@ class Orderpoints extends Model
     }
     public function product()
     {
-        return $this->belongsTo(productspoints::class,'ProductsPoints_id', 'id')->withTrashed();
+        return $this->belongsTo(ProductsPoints::class,'ProductsPoints_id', 'id')->withTrashed();
     }
 
 }
