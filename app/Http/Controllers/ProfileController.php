@@ -64,7 +64,7 @@ class ProfileController extends Controller
         ], 201);
     }
 
-    /** 
+    /**
      * Update the specified user's information in storage.
      */
     public function update(Request $request, $id)

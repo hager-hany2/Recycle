@@ -16,14 +16,7 @@ class productspoints extends Model
     protected $guarded = []; // Use guarded to protect against mass assignment
 
     // Define fillable fields
-    protected $fillable = ['ProductsPoints_id', 'name', 'point', 'image_url'];
+    protected $fillable = ['id', 'name', 'point', 'image_url'];
 
-    /**
-     * Relationship with User model.
-     * Indicates that a ProductPoint belongs to a User.
-     */
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'user_id');
-    }
+
 }
