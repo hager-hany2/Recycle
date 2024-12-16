@@ -9,21 +9,21 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class productspoints extends Model
 {
     use HasFactory, SoftDeletes;
-<<<<<<< HEAD
 
-    // key
-    protected $primaryKey = 'id';
-    protected $table = 'productspoints';
-    protected $guarded = [];
+    // Primary key and table name
+    protected $primaryKey = 'id'; // Assuming 'ProductsPoints_id' is the correct primary key
+    protected $table = 'productspoints'; // Table name
+    protected $guarded = []; // Use guarded to protect against mass assignment
 
+    // Define fillable fields
+    protected $fillable = ['ProductsPoints_id', 'name', 'point', 'image_url'];
 
+    /**
+     * Relationship with User model.
+     * Indicates that a ProductPoint belongs to a User.
+     */
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
     }
-
-=======
-    protected $primaryKey = 'ProductsPoints_id';
-protected $fillable=['ProductsPoints_id','name','point','image_url'];
->>>>>>> 0300525f4a97b5eec70b92647ce911221f0f9110
 }
