@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\CategoryResource;
 use App\Models\User;
-use App\traits\UploadImage;
+use App\Traits\UploadImage;
 use Illuminate\Http\Request;
 use App\Http\Requests\CategoryFormRequest;
 use Illuminate\Support\Facades\Storage;

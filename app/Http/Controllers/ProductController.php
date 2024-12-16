@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ProductFormRequest;
 use App\Models\products;
 use App\Services\TranslationGoogle;
-use App\traits\UploadImage;
+use App\Traits\UploadImage;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
