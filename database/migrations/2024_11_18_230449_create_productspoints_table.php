@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('productspoints', function (Blueprint $table) {
             $table->id('ProductsPoints_id');
-            $table->unsignedBigInteger('user_id');  // تأكد من أن النوع هو unsignedBigInteger
-            $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete()->cascadeOnUpdate();
+            // $table->unsignedBigInteger('user_id');  // تأكد من أن النوع هو unsignedBigInteger
+            // $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete()->cascadeOnUpdate();
             $table->string('name');
             $table->integer('point');
             $table->text('image_url');
