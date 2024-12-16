@@ -16,22 +16,40 @@ class AdminUserSeeder extends Seeder
      */
     public function run()
     {
-        //
-        DB::table('users')->insert([
-            'username' => 'admin',
+
+
+
+        // Create account for Hager
+        User::create([
+            'username' => 'hager',
             'email' => 'hager@gmail.com',
-            'phone' => '1234567890',
-            'password' => Hash::make('12345678'), // Always hash passwords
+            'phone' => '01002444738',
+            'password' => Hash::make('12345678'),
             'role' => 'admin',
-            'category_user' => null, // Not applicable for admin
-            'api_token' => bin2hex(random_bytes(40)), // Generate a random API token
             'price' => 0,
             'point' => 0,
             'is_locked' => 0,
-            'image_url' => '50.png', // Adjust as needed
+            'image_url' => "50.png", // Optional
+            'Gender' => 'male', // Set a default value
+            'created_at' => now(),
+            'updated_at' => now()
+            ]);
+
+        // Create account for Kero
+        User::create([
+            'username' => 'ker00sama',
+            'email' => 'cocoosama6@gmail.com',
+            'phone' => '01010110600',
+            'password' => Hash::make('kerokero'), // Always hash passwords
+            'role' => 'admin',
+            'price' => 0,
+            'point' => 0,
+            'is_locked' => 0,
+            'image_url' => "1.png", // Optional
             'Gender' => 'male', // Set a default value
             'created_at' => now(),
             'updated_at' => now(),
         ]);
+
     }
 }

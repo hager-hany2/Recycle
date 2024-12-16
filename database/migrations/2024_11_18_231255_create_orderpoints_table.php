@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete()->cascadeOnUpdate();
             $table->unsignedBigInteger('ProductsPoints_id');
-            $table->foreign('ProductsPoints_id')->references('ProductsPoints_id')->on('productspoints')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreign('ProductsPoints_id')->references('id')->on('productspoints')->cascadeOnDelete()->cascadeOnUpdate();
             $table->text('address')->nullable();  // العنوان يمكن أن يكون فارغًا
             $table->string('phone')->nullable();  // الهاتف يمكن أن يكون فارغًا
             $table->enum('status', ['pending', 'cancel', 'complete']);  // حالة الطلب

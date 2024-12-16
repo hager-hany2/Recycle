@@ -7,6 +7,9 @@ use App\Http\Requests\UserFormRequest;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Testing\Fluent\Concerns\Has;
 use Stichoza\GoogleTranslate\GoogleTranslate;
 
 class RegisterController extends Controller
@@ -39,7 +42,7 @@ class RegisterController extends Controller
             // Random Number 1 to 100
             $number = rand(1, 100);
             $data['image_url'] = $number . '.png';
-            $data['password'] = bcrypt($data['password']);
+            $data['password'] = Hash::make($data['password']);
 
             $user = User::create($data);
             $token = $user->createToken($user->id, ['*'], now()->addWeek());

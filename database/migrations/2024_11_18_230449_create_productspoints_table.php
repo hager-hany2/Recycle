@@ -12,9 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('productspoints', function (Blueprint $table) {
-            $table->id('id');
-            $table->unsignedBigInteger('user_id');  // تأكد من أن النوع هو unsignedBigInteger
-           $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->id();
             $table->string('name');
             $table->integer('point');
             $table->text('image_url');

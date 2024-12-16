@@ -14,27 +14,25 @@ return [
     | To learn more: https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
     |
     */
-    //to remove cors error
 
+    'paths' => ['*'],
 
+    'allowed_methods' => ['*'],
 
-    'paths' => ['api/*', 'sanctum/csrf-cookie'],
-
-    'allowed_methods' => ['*'],//Allows to define header(post,GET,PUT,DELETE) options to send request Authorization
 
     'allowed_origins' => [
         'http://localhost:4200',
         'https://rasclny.vercel.app',
     ],
+
     'allowed_origins_patterns' => [],
 
-    'allowed_headers' => ['Content-Type,X-Auth-Token,Origin,Authorization'],// allow send for example json
+    'allowed_headers' => ['*'],
 
     'exposed_headers' => [],
 
     'max_age' => 0,
 
-    'supports_credentials' => false,
+    'supports_credentials' => true,
 
 ];
-

@@ -13,6 +13,10 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
+
+
+    protected $guarded = [];
+
     /**
      * The attributes that are mass assignable.
      *
@@ -31,10 +35,7 @@ class User extends Authenticatable
         'image_url'
     ];
 
-    public function setPasswordAttribute($val)
-    {
-        $this->attributes['password'] = bcrypt($val);//hashed
-    }
+
 
 
     /**
