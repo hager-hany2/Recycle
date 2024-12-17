@@ -43,7 +43,6 @@ Route::group(['middleware' => 'ChangeLang'], function () {
 
     // Admin Routes
     Route::middleware(['admin'])->prefix('admin')->group(function () {
-        //store
 
         //product Routes
         Route::post('products', [ProductController::class, 'store'])->name('admin.products.store');

@@ -24,6 +24,7 @@ return [
     'allowed_origins' => [
         'http://localhost:4200',
         'https://rasclny.vercel.app',
+        'https://rasclny-hadeers-projects-767ecc5e.vercel.app'
     ],
 
     'allowed_origins_patterns' => [],

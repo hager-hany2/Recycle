@@ -40,7 +40,7 @@ class RegisterController extends Controller
             $data['role'] = 'user';
             $data['category_user'] = 'home';
             // Random Number 1 to 100
-            $number = rand(1, 100);
+            $number = rand(1, 80);
             $data['image_url'] = $number . '.png';
             $data['password'] = Hash::make($data['password']);
 

@@ -19,7 +19,7 @@ class ChatHistoryController extends Controller
         $userMessage = $request->input('message');
 
         // رابط Flask API
-        $flaskUrl = config('app.flask_api_url');
+        $flaskUrl =  "http://127.0.0.1:5000/chat";
 
         try {
             // إرسال الطلب لـ Flask API
@@ -27,8 +27,9 @@ class ChatHistoryController extends Controller
                 'message' => $userMessage,
             ]);
 
+
             // الحصول على الرد
-            $botReply = $response->json()['reply'] ?? 'No reply';
+            $botReply = $response->json()['response'] ?? 'No reply';
 
             // حفظ الرسالة والرد في قاعدة البيانات
             ChatHistory::create([
@@ -37,7 +38,9 @@ class ChatHistoryController extends Controller
             ]);
 
 
-            return response()->json(['reply' => $botReply]);
+
+            return response()->json(['reply' => $botReply], 200, [], JSON_UNESCAPED_UNICODE);
+
 
         } catch (\Exception $e) {
             // في حالة حدوث خطأ
