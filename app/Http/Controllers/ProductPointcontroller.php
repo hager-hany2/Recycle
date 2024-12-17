@@ -26,10 +26,10 @@ class ProductPointcontroller extends Controller
 
             $products = ProductsPoints::all()->map(function ($product) use ($translator) {
                 return [
-                    "user_id" => $translator->translate($product["user_id"]),
+                    "user_id" => $product["user_id"],
                     "id" => $product["id"],
                     "name" => $translator->translate($product["name"]),
-                    "point" => $translator->translate($product["point"]),
+                    "point" => $product["point"],
                     "image_url" => $product["image_url"], // No need to translate URLs
                 ];
             });

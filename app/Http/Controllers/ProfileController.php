@@ -43,8 +43,8 @@ class ProfileController extends Controller
             'phone' => $user['phone'],
             "role" => $translator->translate($user["role"]), // Translated role
             "category_user" => $translator->translate($user["category_user"]), // Translated user category
-            'price' => $translator->translate($user["price"]),
-            'point' => $translator->translate($user["point"]),
+            'price' => $user["price"],
+            'point' => $user["point"],
             "created_at" => $user["created_at"],
             "gender" => $user["Gender"],
         ], 201);
