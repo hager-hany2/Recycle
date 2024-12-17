@@ -4,98 +4,80 @@ namespace App\Http\Controllers;
 
 use App\Models\ChatHistory;
 use Illuminate\Http\Request;
-
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class ChatHistoryController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+
+    const RATE_LIMIT = 10;
+    const RATE_LIMIT_TIME = 60; // in seconds
+    const BAN_TIME = 300; // in seconds
+    const FLASK_API_URL = "https://rasclny-ai.kero-dev.tech/chat";
+    const API_KEY = '4e652221-891b-42a4-9800-8b03f56cd9fe';
+
     public function interactWithChatbot(Request $request)
     {
-        // الرسالة المدخلة من المستخدم
-        $userMessage = $request->input('message');
+        $ip = $request->ip();
+        $rateLimitKey = 'rate_limit_' . $ip;
+        $banKey = 'ban_' . $ip;
 
-        // رابط Flask API
-        $flaskUrl =  "http://127.0.0.1:5000/chat";
-
-        try {
-            // إرسال الطلب لـ Flask API
-            $response = Http::post($flaskUrl, [
-                'message' => $userMessage,
-            ]);
-
-
-            // الحصول على الرد
-            $botReply = $response->json()['response'] ?? 'No reply';
-
-            // حفظ الرسالة والرد في قاعدة البيانات
-            ChatHistory::create([
-                'user_message' => $userMessage,
-                'bot_reply' => $botReply,
-            ]);
-
-
-
-            return response()->json(['reply' => $botReply], 200, [], JSON_UNESCAPED_UNICODE);
-
-
-        } catch (\Exception $e) {
-            // في حالة حدوث خطأ
-            return response()->json([
-                'error' => 'Failed to connect to Chatbot API',
-                'message' => $e->getMessage(),
-            ], 500);
+        if ($this->isBanned($banKey)) {
+            return $this->bannedResponse();
         }
+
+        if ($this->hasExceededRateLimit($rateLimitKey, $banKey)) {
+            return $this->rateLimitExceededResponse();
+        }
+
+        $userMessage = $request->input('message');
+        $response = $this->sendMessageToApi($userMessage);
+
+        if ($response->failed()) {
+            Log::error('API call failed', ['url' => self::FLASK_API_URL]);
+            $message = "Sorry, I'm unable to process your request at the moment. Please try again later.";
+            return response()->json(['reply' => $message], 200);
+
+        }
+
+        $botReply = $response->json()['response'] ?? 'No reply';
+        ChatHistory::create([
+            'user_message' => $userMessage,
+            'bot_reply' => $botReply,
+        ]);
+
+        return response()->json(['reply' => $botReply], 200, [], JSON_UNESCAPED_UNICODE);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    private function isBanned($banKey)
     {
-        //
+        return Cache::has($banKey);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    private function bannedResponse()
     {
-        //
+        $message = "You've reached the rate limit. Please try again later.";
+        return response()->json(['reply' => $message], 200);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(ChatHistory $chatHistory)
+    private function hasExceededRateLimit($rateLimitKey, $banKey)
     {
-        //
+        $requestCount = Cache::get($rateLimitKey, 0);
+        if ($requestCount >= self::RATE_LIMIT) {
+            Cache::put($banKey, true, self::BAN_TIME);
+            Cache::forget($rateLimitKey); // Reset rate limit after banning
+            return true;
+        }
+        Cache::put($rateLimitKey, $requestCount + 1, self::RATE_LIMIT_TIME);
+        return false;
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(ChatHistory $chatHistory)
+    private function sendMessageToApi($userMessage)
     {
-        //
+        return Http::withHeaders(['api-key' => self::API_KEY])
+            ->post(self::FLASK_API_URL, ['message' => $userMessage]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, ChatHistory $chatHistory)
-    {
-        //
-    }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(ChatHistory $chatHistory)
-    {
-        //
-    }
 }
