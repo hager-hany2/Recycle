@@ -107,7 +107,7 @@ class AdminUserSeeder extends Seeder
             ],
         ]);
 
-        
+
         DB::table('productspoints')->insert([
             [
                 'id' => 1,
