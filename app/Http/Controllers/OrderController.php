@@ -56,6 +56,7 @@ class OrderController extends Controller
                         ]);
                     }
                 } else {
+
                     $product = products::find($productId);
                     if ($product) {
                         Order::create([
@@ -67,8 +68,13 @@ class OrderController extends Controller
                             'total_price' => $totalAmount * $product->price_product,
                             'quantity' => $totalAmount
                         ]);
+
+                        // add points for user
+//                        $user->price
+//                        $user->point
                     }
                 }
+
             }
 
             $user->save(); // Update user points balance in database
