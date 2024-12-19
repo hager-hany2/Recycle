@@ -10,7 +10,7 @@ class Orderpoints extends Model
 {
     use HasFactory,SoftDeletes;
     protected $primaryKey = 'OrderPoint_id';
-    protected $fillable=['OrderPoint_id','ProductsPoints_id','user_id', 'address','phone','status','total_price','quantity'];
+    protected $fillable=['OrderPoint_id','ProductsPoints_id','user_id', 'address','phone','status','total_price','quantity','pickup_time'];
     public function user()
     {
         return $this->belongsTo(User::class);
