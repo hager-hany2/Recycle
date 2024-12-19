@@ -54,12 +54,15 @@ Route::group(['middleware' => 'ChangeLang'], function () {
         Route::get('/report/order', ReportOrdercontroller::class);
     });
     Route::middleware(['auth:api'])->group(function () {
+        //place Order
+
+        Route::post('/orders/submit', [OrderController::class, 'placeOrder'])->name('placeOrder');
+
         // Payment Routes
         Route::prefix('payment')->group(function () {
             Route::post('/', [PaymentController::class, 'store'])->name('payment.store');
         });
-        // Order Routes
-        Route::post('/order/{id}', [OrderController::class, 'store'])->name('order.store');
+
     });
 
 });
@@ -67,6 +70,8 @@ Route::group(['middleware' => 'ChangeLang'], function () {
 
 // Profile Routes
 Route::middleware(['auth:api'])->prefix('profile')->group(function () {
+
+
     Route::get('/show', [ProfileController::class, 'show'])->name('profile.show');
     Route::put('/update/{id}', [ProfileController::class, 'updateApi'])->name('profile.update');
     Route::post('/logout', [LoginController::class, 'logout'])->name('auth.logout');
